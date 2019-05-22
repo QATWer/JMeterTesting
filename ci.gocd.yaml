@@ -2,7 +2,7 @@ pipelines:
   JMETER_API_TEST:
     materials:
       mygit:
-        git: git@github.com:techops-infradel/api-gw-functional-test.git
+        git: git@github.com:cfan2012/JMeterTesting.git
         branch: master
 #      myupstream:
 #        pipeline: upstream-pipeline
