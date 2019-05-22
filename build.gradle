@@ -1,0 +1,66 @@
+plugins {
+    id 'groovy'
+    id "net.foragerr.jmeter" version "1.1.0-4.0"
+}
+
+group 'ThoughtWorks'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jmeter {
+
+    jmTestFiles = [file("jmeter/test.jmx")]
+
+    csvLogFile = false
+    afterEvaluate {
+        def jMeterExt = project.extensions.findByName("jmeter")
+        jMeterExt.metaClass.enableReports = true
+        jMeterExt.metaClass.enableExtendedReports = false
+        jMeterExt.metaClass.reportTitle = null
+        jMeterExt.metaClass.reportPostfix = ""
+        jMeterExt.metaClass.reportXslt = "$project.projectDir/jmeter-results-detail-report_21.xsl"
+    }
+}
+
+task readXml{
+    def dir = fileTree("$projectDir/build/jmeter-report/"){
+        include '*.xml'
+    }
+    def numberOfXml = dir.getFiles().size()
+    def findFiles = dir.getFiles()
+//    println dir.toString()
+//    println numberOfXml
+    for(int i=0; i<numberOfXml; i++){
+        String fileName = findFiles.getAt(i).toString()
+//        println fileName
+        def outputList = read(fileName)
+        for(String message: outputList)
+            println message
+
+    }
+}
+
+def read(String FileName){
+    def xmlSluper = new XmlSlurper()
+
+    def result = xmlSluper.parse(file(FileName))
+    def errorMessageList = result.httpSample*.assertionResult*.failureMessage;
+    def outputList = new ArrayList()
+    for(int i=0; i<errorMessageList.size(); i++){
+        String errorTitle = result.httpSample*.@lb[i]
+        String errorMessage = errorMessageList.get(i)
+        if(errorMessage!=""){
+            String string = "Occored a error,"+ "log file is "+ FileName +", test case name is \""+errorTitle+"\". " + "Reason is: " + errorMessage
+            outputList.add(string)
+        }
+    }
+    return outputList
+}

@@ -1,0 +1,25 @@
+pipelines:
+  JMETER_API_TEST:
+    materials:
+      mygit:
+        git: git@github.com:techops-infradel/api-gw-functional-test.git
+        branch: master
+#      myupstream:
+#        pipeline: upstream-pipeline
+#        stage: upstream-stage
+    stages:
+    - FunctionalTest:
+        clean_workspace: true
+        jobs:
+          RunTest:
+            tasks:
+            - exec:
+                command: make
+                arguments:
+                - run
+          ReadTestLog:
+            tasks:
+              - exec:
+                  command: make
+                  arguments:
+                    - readReport
