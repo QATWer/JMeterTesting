@@ -17,7 +17,7 @@ dependencies {
 
 jmeter {
 
-    jmTestFiles = [file("jmeter/test.jmx")]
+    jmTestFiles = [file("src/jmeter/test.jmx")]
 
     csvLogFile = false
     afterEvaluate {

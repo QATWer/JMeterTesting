@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 echo "Clean to old test log...."
-./gradlew jmClean
+../gradlew jmClean
 
-./import.sh $1
+import.sh $1
 
 echo "Start to run functional test...."
-./gradlew jmRun
+../gradlew jmRun
